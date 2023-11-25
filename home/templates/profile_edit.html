@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtFusion | Edit Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .gradient-custom-2 {
+            /* fallback for old browsers */
+            background: #fbc2eb;
+
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: -webkit-linear-gradient(to right, rgba(251, 194, 235, 1), rgba(166, 193, 238, 1));
+
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            background: linear-gradient(to right, rgba(251, 194, 235, 1), rgba(166, 193, 238, 1))
+        }
+        body::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    {% include 'partials/navbar.html' with logged_in=user_profile.logged_in nav_active=user_profile.nav_active %}
+    <section class="h-100 gradient-custom-2">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-9 col-xl-7">
+                    <div class="card">
+                        <div class="rounded-top text-white d-flex flex-row"
+                            style="background-color: #000; height:200px;">
+                            <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                                {% if user_profile.profile_photo %}
+                                <img src="{{ user_profile.profile_photo.url }}"
+                                    alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" id="profile_pic"
+                                    style="width: 150px; z-index: 1;">
+                                {% else %}
+                                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                                    alt="Generic placeholder image" class="img-fluid img-thumbnail mt-4 mb-2" id="profile_pic"
+                                    style="width: 150px; z-index: 1;">
+                                {% endif %}
+                                <button type="button" class="btn btn-info" data-mdb-ripple-color="dark"
+                                    style="z-index: 1;" disabled>
+                                    Follow
+                                </button>
+                                
+                            </div>
+                            <div class="ms-3" style="margin-top: 130px;">
+                                <h5 id="username">{{ user_profile.userName | default:"Andy Horwitz" }}</h5>
+                                <p id="user_profession">{{ user_profile.profession | default:"New York"}}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 text-black" style="background-color: #f8f9fa;">
+                            <div class="d-flex justify-content-end text-center py-1">
+                                <div>
+                                    <p class="mb-1 h5">{{ user_profile.no_post | default:0 }}</p>
+                                    <p class="small text-muted mb-0">Photos</p>
+                                </div>
+                                <div class="px-3">
+                                    <p class="mb-1 h5">{{ user_profile.no_followers | default:0 }}</p>
+                                    <p class="small text-muted mb-0">Followers</p>
+                                </div>
+                                <div>
+                                    <p class="mb-1 h5">{{ user_profile.no_following | default:0 }}</p>
+                                    <p class="small text-muted mb-0">Following</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4 text-black">
+                            <div class="mb-3">
+                                <p class="lead fw-normal mb-1">About</p>
+                                <div class="p-4" style="background-color: #f8f9fa;">
+                                    <p class="font-italic mb-1">Web Developer</p>
+                                    <p class="font-italic mb-1">Lives in New York</p>
+                                    <p class="font-italic mb-0" id="about_user">{{ user_profile.about_user | default:"Photographer" }}</p>
+                                </div>
+                            </div>
+                            <!-- <div class="d-flex justify-content-between align-items-center mb-4">
+                                <p class="lead fw-normal mb-0">Recent photos</p>
+                                <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col mb-2">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp"
+                                        alt="image 1" class="w-100 rounded-3">
+                                </div>
+                                <div class="col mb-2">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp"
+                                        alt="image 1" class="w-100 rounded-3">
+                                </div>
+                            </div>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp"
+                                        alt="image 1" class="w-100 rounded-3">
+                                </div>
+                                <div class="col">
+                                    <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp"
+                                        alt="image 1" class="w-100 rounded-3">
+                                </div>
+                            </div> -->
+                        </div>
+                        <hr>
+                        <div class="card-body p-4 text-black">
+                            <form action="{% url 'update_profile' user=user_profile.userName %}" enctype="multipart/form-data" method="post">
+                                {% csrf_token %}
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Profession</span>
+                                    <input type="text" class="form-control" id="edit_profession" name="edit_profession" value="{{ user_profile.profession }}" placeholder="Artist" aria-label="Artist" aria-describedby="basic-addon1" onchange="updateProfession()">
+                                  </div>
+                                  <div class="form-floating mb-3">
+                                    <textarea class="form-control" placeholder="Leave a comment here" id="edit_about" name="edit_about" val style="height: 100px" onchange="updateAbout()">{{ user_profile.about_user }}</textarea>
+                                    <label for="edit_about">About</label>
+                                  </div>
+                                  <div class="input-group mb-3">
+                                    <input type="file" class="form-control" id="edit_profile_pic" name="edit_profile_pic" accept="image/*" oninput="updateProfilePic(event)">
+                                    <label class="input-group-text" for="edit_profile_pic">Upload Profile Pic</label>
+                                  </div>
+                                  <div class="d-flex justify-content-evenly">
+                                    <a class="btn btn-outline-secondary" href="/profile/{{ user_profile.userName }}">Cancel</a>
+                                    <button class="btn btn-primary" type="submit">Save</button>
+                                  </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        function updateProfession(){
+            document.getElementById("user_profession").innerHTML = document.getElementById("edit_profession").value;
+        }
+        function updateAbout(){
+            document.getElementById("about_user").innerHTML = document.getElementById("edit_about").value;
+        }
+        function updateProfilePic(event){
+            document.getElementById("profile_pic").src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
