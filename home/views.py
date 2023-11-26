@@ -9,11 +9,7 @@ import json
 # Create your views here.
 
 def home(request):
-    postDatas = list(UserPost.objects.all())
-    # inst = UserProfile.objects.get(username="Mayur")
-    # inst.delete()
-
-    postDatas.reverse()
+    # data for navbar
     user_profile = {}
     user_profile["nav_active"] = {
         "home": "active",
@@ -31,9 +27,14 @@ def home(request):
         request.session['UserName'] = None
     print(temp, request.session["logged_in"])
     if request.session["logged_in"] == True:
-        print("yes", request.session['UserName'])
+        print("home", request.session['UserName'])
         userTemp = UserProfile.objects.get(username=request.session['UserName'])
-        userPosts = len(UserPost.objects.filter(username=userTemp))
+        # user profile data to render
+        user_profile['no_posts'] = len(UserPost.objects.filter(username=userTemp))
+        user_profile['no_followers'] = len(userTemp.followers['followers'])
+        user_profile['no_following'] = len(userTemp.following['following'])
+        user_profile['profession'] = userTemp.profession
+        user_profile['profile_photo'] = userTemp.profile_photo
 
         # Retrieving and processing followers data to be shown in home page
         followers_user_data = []
@@ -64,15 +65,33 @@ def home(request):
         #     }
         #     following_user_data.append(temp)
  
-        user_profile['no_posts'] = userPosts
-        user_profile['no_followers'] = len(userTemp.followers['followers'])
-        user_profile['no_following'] = len(userTemp.following['following'])
+        
         user_profile['followers'] = followers_user_data
         # user_profile['following'] = following_user_data
-        user_profile['profession'] = userTemp.profession
-        user_profile['profile_photo'] = userTemp.profile_photo
+        
     user_profile['logged_in'] = request.session["logged_in"]
     user_profile['userName'] = request.session["UserName"]
+
+    # All post for showing on home page
+    postDatas = list(UserPost.objects.all())
+    postDatas.reverse()
+
+    # Processing Posts to ckeck whether user has liked it or not
+    tempUserPosts = []
+    username = None
+    if request.session["logged_in"]:
+        username = request.session["UserName"]
+    for post in postDatas:
+        temp = {
+            'postData': post,
+            'is_liked': False
+        }
+        if username in post.likes['likes']:
+            temp["is_liked"] = True
+        tempUserPosts.append(temp)
+    postDatas = tempUserPosts
+
+
     context = {
         "user_profile": user_profile,
         "postDatas": postDatas
@@ -110,20 +129,25 @@ def user_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         print(email, password)
-        user = UserProfile.objects.get(email=email, password=password)
-        if user:
-            print(user)
+        try:
+            user = UserProfile.objects.get(email=email, password=password)
+            if user:
+                print(user)
 
-            # user_profile["logged_in"] = True
-            # user_profile['userName'] = user.username
-            # user_profile['no_followers'] = len(user.followers['followers'])
-            # user_profile['no_following'] = len(user.following['following'])
+                # user_profile["logged_in"] = True
+                # user_profile['userName'] = user.username
+                # user_profile['no_followers'] = len(user.followers['followers'])
+                # user_profile['no_following'] = len(user.following['following'])
 
-            request.session["logged_in"] = True
-            request.session["UserName"] = user.username
-            # print(user_profile)
-            
-            return redirect('home')
+                request.session["logged_in"] = True
+                request.session["UserName"] = user.username
+                # print(user_profile)
+                
+                return redirect('home')
+        except UserProfile.DoesNotExist as e:
+            print("DoesNotExist", e)
+        except Exception as e:
+            print(e)
 
     return render(request, 'login.html')
 
@@ -133,16 +157,32 @@ def profile(request, user):
     userData = UserProfile.objects.get(username=user)
     userPosts = UserPost.objects.filter(username=userData)
     
-    # global user_profile
-    if user == request.session.get('UserName', False):
+    # Checking if user is viewing his own profile or not
+    if user == request.session.get('UserName', None):
         user_s_profile = True
     else:
         user_s_profile = False
+        # If user user is viewing other's profile then checking if he is follower or not
         followers = userData.followers['followers']
-        if request.session.get('UserName', False) in followers:
+        if request.session.get('UserName', None) in followers:
             user_is_follower = True
         else:
             user_is_follower = False
+
+    # Processing Posts to ckeck whether user has liked it or not
+    tempUserPosts = []
+    username = None
+    if request.session["logged_in"]:
+        username = request.session["UserName"]
+    for post in userPosts:
+        temp = {
+            'postData': post,
+            'is_liked': False
+        }
+        if username in post.likes['likes']:
+            temp["is_liked"] = True
+        tempUserPosts.append(temp)
+    userPosts = tempUserPosts
 
     profile_data = {
         'user_s_profile': user_s_profile,
@@ -327,8 +367,8 @@ def load_followers_following(request):
             elif user_profile["logged_in"]:
                 userTemp = UserProfile.objects.get(username=user_profile["userName"])
 
+            users_data = []
             if load_data['what_to_load'] == 'following':
-                users_data = []
                 for user in list(userTemp.following['following']):
                     user_pr = UserProfile.objects.get(username=user)
                     temp = {
@@ -344,7 +384,6 @@ def load_followers_following(request):
                     users_data.append(temp)
 
             elif load_data['what_to_load'] == 'followers':
-                users_data = []
                 for user in list(userTemp.followers['followers']):
                     user_pr = UserProfile.objects.get(username=user)
 
@@ -385,7 +424,7 @@ def load_posts(request):
         # global user_profile
         user_profile = {}
         user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["userName"] = request.session["UserName"]
+        user_profile["UserName"] = request.session["UserName"]
         # if user_profile["logged_in"]:
         try:
             load_data = json.loads(request.body)
@@ -396,13 +435,20 @@ def load_posts(request):
             for post in posts:
                 temp = {
                     'username': User.username,
+                    'pk': post.pk,
                     'post_title': post.post_title,
                     'post_content': post.post_content,
                     'created_at': post.created_at,
-                    'likes': post.likes,
+                    'likes': len(post.likes['likes']),
+                    'is_liked': False
                 }
                 if post.post_image:
                     temp['post_image'] = post.post_image.url
+                if user_profile["logged_in"]:
+                    UserTemp = UserProfile.objects.get(username=user_profile["UserName"])
+                    if UserTemp.username in post.likes['likes']:
+                        temp["is_liked"] = True
+
                 postDatas.append(temp)
 
             data["posts"] = postDatas
@@ -412,6 +458,37 @@ def load_posts(request):
             data["success"] = False
         return JsonResponse(data)
 
+def like_post(request):
+    if request.method == "POST":
+        data = {
+            'success': False
+        }
+        try:
+            load_data = json.loads(request.body)
+            user_profile = {}
+            user_profile["logged_in"] = request.session["logged_in"]
+            user_profile["UserName"] = request.session["UserName"]
+            if user_profile["logged_in"]:
+                post_pk = load_data['post_pk']
+                like_action = load_data['like']
+                User = UserProfile.objects.get(username=user_profile["UserName"])
+                Post = UserPost.objects.get(pk=post_pk)
+                like_list = set(Post.likes['likes'])
+                if like_action:
+                    like_list.add(User.username)
+                else:
+                    like_list.discard(User.username)
+                Post.likes['likes'] = list(like_list)
+                Post.save()
+                data["success"] = True
+                print(data["success"])
+            else:
+                data['not_logged_in'] = True
+                # return redirect('home')
+        except Exception as e:
+            print(e)
+            data["success"] = False
+        return JsonResponse(data)
 
 def load_whole_post(request):
     pass

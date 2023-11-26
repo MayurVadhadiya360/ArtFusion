@@ -1,0 +1,46 @@
+/* .gradient-custom-2 {
+    background: linear-gradient(to right, rgb(74, 69, 73), rgb(87, 97, 237))
+} */
+
+/* .gradient-custom-2 { */
+    /* fallback for old browsers */
+    /* background: #fbc2eb; */
+
+    /* Chrome 10-25, Safari 5.1-6 */
+    /* background: -webkit-linear-gradient(to right, rgba(251, 194, 235, 1), rgba(166, 193, 238, 1)); */
+
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    /* background: linear-gradient(to right, rgba(251, 194, 235, 1), rgba(166, 193, 238, 1)) */
+/* } */
+
+body::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollDiv {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    align-items: center;
+}
+
+.scrollDiv::-webkit-scrollbar {
+    display: none;
+}
+
+.post-shadow {
+    box-shadow: 0px 0px 5px 5px #7c7c7c;
+}
+
+.post-container {
+    box-shadow: 0px 0px 10px 10px #7c7c7c inset;
+    /* box-shadow: 0px 0px 10px 10px #ffffff inset; */
+    /* background-color: black; */
+}
+
+.fol-fol {
+    box-shadow: 0px 7px 7px 0px #7c7c7c inset;
+}
+
+.fol:hover {
+    cursor: pointer;
+}

@@ -11,38 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <style>
-        /* .gradient-custom-2 {
-            background: linear-gradient(to right, rgb(74, 69, 73), rgb(87, 97, 237))
-        } */
-
-        .scrollDiv {
-            overflow-x: hidden;
-            overflow-y: scroll;
-            align-items: center;
-        }
-
-        .scrollDiv::-webkit-scrollbar {
-            display: none;
-        }
-
-        .post-shadow {
-            box-shadow: 0px 0px 5px 5px #7c7c7c;
-        }
-
-        .post-container {
-            box-shadow: 0px 0px 10px 10px #7c7c7c inset;
-            /* box-shadow: 0px 0px 10px 10px #ffffff inset; */
-            /* background-color: black; */
-        }
-
-        .fol-fol {
-            box-shadow: 0px 7px 7px 0px #7c7c7c inset;
-        }
-        .fol:hover {
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/index.css">
 </head>
 
 <body style="background-color: black;">
@@ -177,113 +146,22 @@
         crossorigin="anonymous"></script>
     <script>
         const csrfToken = "{{ csrf_token }}";
-
-        function FollowUser(user) {
-            action_decider = document.getElementById(user + '_follow_btn').innerText;
-            console.log(user, action_decider);
-            data = {
-                some_user: user,
-                action_decider: action_decider,
-            }
-
-            requestDataMetadata = {
-                method: "POST",
-                headers: { "content-type": "application/json", "X-CSRFToken": csrfToken },
-                body: JSON.stringify(data)
-            }
-            const url_var = document.location.origin;
-            console.log(url_var);
-
-            fetch(`${url_var}/follow_request/`, requestDataMetadata)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.success, true);
-                    if (data.success) {
-                        document.getElementById(user + '_follow_btn').innerText = data.follow_status_text;
-                        document.getElementById('following_warning').innerHTML = '<i class="bi bi-exclamation-circle text-danger-emphasis "></i>'
-                    } else {
-                        alert("Follow action failed!");
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-
-        function load_follow_ers_ing(what_to_load){
-            var followers_btn = document.getElementById('followers_btn');
-            var following_btn = document.getElementById('following_btn');
-            if(what_to_load == "followers"){
-                followers_btn.classList.add("active", "fol-fol");
-                following_btn.classList.remove("active", "fol-fol");
-            }else if(what_to_load == "following"){
-                following_btn.classList.add("active", "fol-fol");
-                followers_btn.classList.remove("active", "fol-fol");
-            }
-            
-            data = {
-                user: false,
-                what_to_load: what_to_load,
-            }
-
-            requestDataMetadata = {
-                method: "POST",
-                headers: { "content-type": "application/json", "X-CSRFToken": csrfToken },
-                body: JSON.stringify(data)
-            }
-
-            const url_var = document.location.origin;
-            console.log(url_var);
-
-            fetch(`${url_var}/load_follow/`, requestDataMetadata)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.success, true);
-                    if (data.success) {
-                        s = '';
-                        data.users_data.forEach(user => {
-                            s += `
-                            <div class="card post-shadow mb-2" style="border: 2px solid black;">
-                                <div class="row d-flex justify-content-between">
-                                    <div class="col-3 container-fluid">`
-
-                                        if (user.profile_photo_url){
-                                        s += `
-                                        <img src="${ user.profile_photo_url }" alt="Generic placeholder image"
-                                            class="img-fluid img-thumbnail my-1 ms-1" id="profile_pic"
-                                            style="width: 70px; height: 70px;">`
-                                        }else{
-                                        s += `
-                                        <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                                            alt="Generic placeholder image" class="img-fluid img-thumbnail my-1 ms-1"
-                                            id="profile_pic" style="width: 70px; height: 70px;">`
-                                        }
-                                        s += `
-                                    </div>
-                                    <div class="col-5 text-center mt-4">
-                                        <p class="d-inline-block text-truncate row" style="max-width: 120px;">
-                                            ${ user.name }
-                                        </p>
-                                    </div>
-                                    <div class="col-2 card-body mt-2">
-                                        <button class="btn btn-outline-dark btn-sm" onclick="FollowUser('${user.name}')"
-                                        id="${ user.name }_follow_btn">${ user.my_follow_status }</button>
-                                    </div>
-                                </div>
-                            </div>`
-                        });
-                        document.getElementById('follow_viewer').innerHTML = s;
-                    } else {
-                        alert("Follow action failed!");
-                        document.getElementById('follow_viewer').innerHTML = "Try Again!";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('follow_viewer').innerHTML = "Error!";
-                });
-        }
+        function update_post_follower_following_navbar(what_to_load){
+    var followers_btn = document.getElementById('followers_btn');
+    var following_btn = document.getElementById('following_btn');
+    if (what_to_load == "followers") {
+        followers_btn.classList.add("active", "fol-fol");
+        following_btn.classList.remove("active", "fol-fol");
+    } else if (what_to_load == "following") {
+        following_btn.classList.add("active", "fol-fol");
+        followers_btn.classList.remove("active", "fol-fol");
+    }
+}
     </script>
+    <script src="/static/js/post.js"></script>
+    <script src="/static/js/home.js"></script>
+    <script src="/static/js/follow.js"></script>
+
 </body>
 
 </html>

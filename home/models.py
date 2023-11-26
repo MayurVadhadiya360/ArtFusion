@@ -40,7 +40,7 @@ def JsonDefaultLike():
 class UserPost(models.Model):
     username = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     post_title = models.CharField(max_length=200)
-    post_content = models.CharField(max_length=1000)
+    post_content = models.CharField(max_length=5000)
     post_image = models.ImageField(upload_to='post_images/')
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.JSONField(null=True, default=JsonDefaultLike)

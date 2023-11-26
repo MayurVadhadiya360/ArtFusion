@@ -3,19 +3,21 @@
         {% if from == "home" %}
         <div class="card-body">
             <div class="d-flex justify-content-between">
-                <h5 class="card-title"><a class="nav-link" href="{% url 'profile' postData.username %}">{{postData.username | default:"User Card title"}}</a></h5>
-                <p class="card-text">{{ postData.created_at }}</p>
+                <h5 class="card-title"><a class="nav-link"
+                        href="{% url 'profile' postData.postData.username %}">{{postData.postData.username }}</a></h5>
+                <p class="card-text">{{ postData.postData.created_at }}</p>
             </div>
-            <!-- <h5 class="card-title">{{postData.user | default:"User Card title"}}</h5> -->
             <hr>
         </div>
         {% endif %}
-        {% if postData.post_image.name %}
-        <img src="{{ postData.post_image.url }}" class="card-img p-1" alt="image">
-        {% endif %}
+        <a href="{% url 'load_whole_post' postData.postData.pk %}">
+            {% if postData.postData.post_image.name %}
+            <img src="{{ postData.postData.post_image.url }}" class="card-img p-1" alt="image">
+            {% endif %}
+        </a>
         <div class="card-body">
-            <h5 class="card-title">{{ postData.post_title | default:"Desc Card title"}}</h5>
-            <p class="card-text">{{ postData.post_content | default:"Some quick example text to build on the card title and make up the bulk of the card's content."}}</p>
+            <h5 class="card-title">{{ postData.postData.post_title | default:"Desc Card title"}}</h5>
+            <p class="card-text">{{ postData.postData.post_content | default:"Some quick example text."}}</p>
         </div>
         <hr>
         <div class="card-body row">
@@ -23,12 +25,69 @@
                 <i class="bi bi-send fol"></i>
             </div>
             <div class="col-4 d-flex justify-content-center">
-                <i class="bi bi-chat fol" onclick="view_whole_post('{{ postData.pk }}')"></i>
+                <a href="{% url 'load_whole_post' postData.postData.pk %}"><i class="bi bi-chat fol"></i></a>
             </div>
             <div class="col-4 d-flex justify-content-center">
-                <i class="bi bi-heart fol" style="color: red;" onclick="like_post('{{ postData.pk }}')" id="{{ postData.pk }}_post_like"></i>
-                <span>{{ postData.likes.likes | length | default:"13" }}</span>
+                {% if postData.is_liked %}
+                <i class="bi bi-heart-fill fol" style="color: red;" onclick="like_post('{{ postData.postData.pk }}')"
+                    id="{{ postData.postData.pk }}_post_like"></i>
+                {% else %}
+                <i class="bi bi-heart fol" style="color: red;" onclick="like_post('{{ postData.postData.pk }}')"
+                    id="{{ postData.postData.pk }}_post_like"></i>
+                {% endif %}
+                <span id="{{ postData.postData.pk }}_post_like_count">{{ postData.postData.likes.likes | length | default:"0" }}</span>
             </div>
         </div>
     </div>
 </div>
+<!-- <script>
+    function like_post(post_pk) {
+        let post_like = document.getElementById(`${post_pk}_post_like`);
+        let post_like_count = document.getElementById(`${post_pk}_post_like_count`);
+
+        let like = false;
+
+        if(post_like.classList.contains("bi-heart")){
+            like = true;
+        }
+
+        let data = {
+            post_pk: post_pk,
+            like: like,
+        }
+
+        let requestDataMetadata = {
+            method: "POST",
+            headers: { "content-type": "application/json", "X-CSRFToken": csrfToken },
+            body: JSON.stringify(data)
+        }
+        const url_var = document.location.origin;
+        console.log(url_var);
+        fetch(`${url_var}/post_like/`, requestDataMetadata)
+            .then(response => response.json())
+            .then(data => {
+                console.log("data.success", data.success);
+                if (data.success) {
+                    if(like){
+                        post_like.classList.remove('bi-heart');
+                        post_like.classList.add('bi-heart-fill');
+                        post_like_count.innerText = Number(post_like_count.innerText)+1;
+                    }else{
+                        post_like.classList.remove('bi-heart-fill');
+                        post_like.classList.add('bi-heart');
+                        post_like_count.innerText = Number(post_like_count.innerText)-1;
+                    }
+                } else {
+                    if(data.not_logged_in){
+                        alert("Please Login first!")
+                    }else{
+                        alert("Like action failed!");
+                    }
+                }
+            })
+            .catch(error => {
+                alert("Error!");
+                console.error('Error:', error);
+            });
+    }
+</script> -->
