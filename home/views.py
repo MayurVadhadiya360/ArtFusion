@@ -105,21 +105,21 @@ def register(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        # Create the user
-        try:
-            UserProfile.objects.create(username=username, email=email, password=password)
-            send_mail(
-                subject="Registration Done!",
-                message="Congratulations for completing registration and joining ArtFusion!",
-                from_email="vadhadiya.mayur@gmail.com",
-                recipient_list=[email],
-                # fail_silently=True
-            )
-        except Exception as e:
-            print(e)
-
-
-        return redirect('login')  # Redirect to login page after successful registration
+        password1 = request.POST.get('password1')
+        if password == password1:
+            # Create the user
+            try:
+                UserProfile.objects.create(username=username, email=email, password=password)
+                send_mail(
+                    subject="Registration Done!",
+                    message="Congratulations for completing registration and joining ArtFusion!",
+                    from_email="vadhadiya.mayur@gmail.com",
+                    recipient_list=[email],
+                    # fail_silently=True
+                )
+            except Exception as e:
+                print(e)
+            return redirect('login')  # Redirect to login page after successful registration
     return render(request, 'register.html')
 
 

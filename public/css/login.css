@@ -180,3 +180,36 @@ input[type="submit"]:active
     height: calc(20vw - 2px);
   }
 }
+/* 
+section .signin .content .form .checkBox{
+  display: flex;
+  align-items: center;
+}
+
+section .signin .content .form .checkBox input[type="checkbox"]
+{
+  position: relative;
+  width: 100%;
+  background: #333;
+  border: none;
+  outline: none;
+  padding: 25px 10px 7.5px;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 1em;
+}
+section .signin .content .form .checkBox label
+{
+  position: absolute;
+  left: 0;
+  padding: 15px 10px;
+  font-style: normal;
+  color: white;
+  transition: 0.5s;
+  pointer-events: none;
+} */
+
+section .signin .content .form .checkBox label{
+  color: white;
+}

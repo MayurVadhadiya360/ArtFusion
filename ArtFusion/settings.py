@@ -139,6 +139,8 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 # Set session timeout to 15 minutes (900 seconds)
 SESSION_COOKIE_AGE = 900
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com' # SMTP server for your email provider
 EMAIL_PORT = 587 # Port for the SMTP server
