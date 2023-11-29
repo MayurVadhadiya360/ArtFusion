@@ -15,8 +15,10 @@ urlpatterns = [
 
     path('follow_request/', views.follow_unfollow, name='follow_unfollow'),
     path('load_follow/', views.load_followers_following, name="load_followers_following"),
-
     path('load_posts/', views.load_posts, name="load_posts"),
+    
     path('post/<int:pk>/', views.load_whole_post, name="load_whole_post"),
     path('post_like/', views.like_post, name='like_post'),
+
+    path('add_comment/', views.add_comment, name="add_comment")
 ]

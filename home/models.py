@@ -37,6 +37,9 @@ class UserProfile(models.Model):
 def JsonDefaultLike():
     return {"likes": []}
 
+def JsonDefaultComment():
+    return {"comments": []}
+
 class UserPost(models.Model):
     username = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
     post_title = models.CharField(max_length=200)
@@ -44,6 +47,16 @@ class UserPost(models.Model):
     post_image = models.ImageField(upload_to='post_images/')
     created_at = models.DateTimeField(auto_now_add=True)
     likes = models.JSONField(null=True, default=JsonDefaultLike)
+    # comments = models.JSONField(null=True, default=JsonDefaultComment)
 
     def __str__(self):
-        return self.post_content
+        return "USER: "+self.username.username+"  TITLE: "+self.post_title
+
+class Comments(models.Model):
+    username = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    post = models.ForeignKey(UserPost, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=200)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.comment

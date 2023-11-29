@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.http import JsonResponse
-from .models import UserProfile, UserPost
+from .models import UserProfile, UserPost, Comments
 from django.views import View
+from datetime import datetime
 import json
 # from .forms import RegistrationForm, LoginForm
 
@@ -239,20 +240,17 @@ class profile_update(View):
             return redirect('home')
     
     def post(self, request, user):
-        # global user_profile
         user_profile = {}
         user_profile["logged_in"] = request.session["logged_in"]
         user_profile["userName"] = request.session["UserName"]
+
         if user_profile["logged_in"] and user_profile["userName"] == user:
             user_instance = UserProfile.objects.get(username=user_profile["userName"])
             # if request.POST.get('edit_profession'):
             new_profession = request.POST.get('edit_profession')
-            # if request.POST.get('edit_profession'):
             new_about = request.POST.get('edit_about')
-            # print(request.FILES.get('edit_profile_pic'))
             if request.FILES.get('edit_profile_pic'):
                 new_profile_pic = request.FILES['edit_profile_pic']
-                # print(new_profile_pic)
                 user_instance.profile_photo = new_profile_pic
                 user_instance.save()
             user_instance.profession = new_profession
@@ -458,6 +456,7 @@ def load_posts(request):
             data["success"] = False
         return JsonResponse(data)
 
+# Process the evet of some user liking/disliking some post
 def like_post(request):
     if request.method == "POST":
         data = {
@@ -490,8 +489,53 @@ def like_post(request):
             data["success"] = False
         return JsonResponse(data)
 
-def load_whole_post(request):
-    pass
+# Load whole post with comments
+def load_whole_post(request, pk):
+    # try:
+        post = UserPost.objects.get(pk=pk)
+        comments = Comments.objects.filter(post=post)
+        postData = {
+            'postData': post,
+            'comments': comments,
+            'is_liked': False,
+            'logged_in': False
+        }
+
+        if request.session["logged_in"]:
+            username = request.session["UserName"]
+            if username in post.likes['likes']:
+                postData["is_liked"] = True
+                postData['logged_in'] = True
+
+        return render(request, 'post_with_msg.html', context={"postData": postData})
+    # except Exception as e:
+    #     print(e)
+    # return redirect('home')
+
+# Adds a comment to particular post
+def add_comment(request):
+    if request.method == "POST":
+        # try:
+            logged_in = request.session["logged_in"]
+            UserName = request.session["UserName"]
+            if logged_in:
+                comment = request.POST.get('add_comment')
+                post_pk = request.POST.get('pk')
+                print(post_pk)
+                post = UserPost.objects.get(pk=post_pk)
+                username = UserProfile.objects.get(username=UserName)
+                Comments.objects.create(username=username, post=post, comment=comment)
+                # tempComment = {
+                #     'username': UserName,
+                #     'comment': comment,
+                #     'timestamp': datetime.now().isoformat()
+                # }
+                # post.comments['comments'].append(tempComment)
+                # post.save()
+                return redirect('load_whole_post', pk=post_pk)
+        # except Exception as e:
+        #     print(e)
+    return redirect('home')
 
 def user_logout(request):
     # logout(request)

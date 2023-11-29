@@ -146,17 +146,6 @@
         crossorigin="anonymous"></script>
     <script>
         const csrfToken = "{{ csrf_token }}";
-        function update_post_follower_following_navbar(what_to_load){
-    var followers_btn = document.getElementById('followers_btn');
-    var following_btn = document.getElementById('following_btn');
-    if (what_to_load == "followers") {
-        followers_btn.classList.add("active", "fol-fol");
-        following_btn.classList.remove("active", "fol-fol");
-    } else if (what_to_load == "following") {
-        following_btn.classList.add("active", "fol-fol");
-        followers_btn.classList.remove("active", "fol-fol");
-    }
-}
     </script>
     <script src="/static/js/post.js"></script>
     <script src="/static/js/home.js"></script>

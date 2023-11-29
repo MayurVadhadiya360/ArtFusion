@@ -1,6 +1,6 @@
-<div class="container my-2" data-bs-theme="dark" style="width: 530px;">
+<div class="container my-2" data-bs-theme="dark" style="width: 530px; ">
     <div class="card post-shadow">
-        {% if from == "home" %}
+        {% if from == "home" or from == "post_with_msg" %}
         <div class="card-body">
             <div class="d-flex justify-content-between">
                 <h5 class="card-title"><a class="nav-link"
@@ -10,13 +10,13 @@
             <hr>
         </div>
         {% endif %}
-        <a href="{% url 'load_whole_post' postData.postData.pk %}">
+        <a href="{% url 'load_whole_post' postData.postData.pk %}" target="_blank">
             {% if postData.postData.post_image.name %}
             <img src="{{ postData.postData.post_image.url }}" class="card-img p-1" alt="image">
             {% endif %}
         </a>
         <div class="card-body">
-            <h5 class="card-title">{{ postData.postData.post_title | default:"Desc Card title"}}</h5>
+            <h4 class="card-title">{{ postData.postData.post_title | default:"Desc Card title"}}</h4>
             <p class="card-text">{{ postData.postData.post_content | default:"Some quick example text."}}</p>
         </div>
         <hr>
@@ -25,7 +25,7 @@
                 <i class="bi bi-send fol"></i>
             </div>
             <div class="col-4 d-flex justify-content-center">
-                <a href="{% url 'load_whole_post' postData.postData.pk %}"><i class="bi bi-chat fol"></i></a>
+                <a href="{% url 'load_whole_post' postData.postData.pk %}" target="_blank"><i class="bi bi-chat fol"></i></a>
             </div>
             <div class="col-4 d-flex justify-content-center">
                 {% if postData.is_liked %}
@@ -39,55 +39,57 @@
             </div>
         </div>
     </div>
+    {% if from == "post_with_msg" %}
+    <div class="card mt-4" style="background-color: rgb(255, 255, 255);">
+        <div class="card-body">
+            {% if postData.logged_in %}
+            <form action="{% url 'add_comment' %}" method="post">
+                {% csrf_token %}
+                <div class="input-group" style="box-shadow: 3px 3px 3px 3px #7c7c7c; border-radius: 10px;">
+                    <input type="text" class="form-control" name="add_comment" id="add_comment"
+                        placeholder="Add a comment..." aria-label="Add a comment..." aria-describedby="SubmitComment">
+                    <input type="text" class="form-control" name="pk" id="pk" style="display: none;"
+                        placeholder="{{ postData.postData.pk }}" value="{{ postData.postData.pk }}">
+                    <button class="btn btn-outline-secondary" type="submit" id="add_comment_button">Post</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="input-group" style="box-shadow: 3px 3px 3px 3px #7c7c7c; border-radius: 10px;">
+                <input type="text" class="form-control" name="add_comment" id="add_comment"
+                    placeholder="Add a comment..." aria-label="Add a comment..." aria-describedby="SubmitComment" disabled>
+                <input type="text" class="input-group-text" name="pk" id="pk" style="display: none;"
+                    placeholder="{{ postData.postData.pk }}" disabled>
+                <button class="btn btn-outline-secondary" type="submit" id="add_comment_button" disabled>Post</button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="card mt-4" style="background-color: rgb(60, 54, 54); box-shadow: 5px 5px 5px 5px #7c7c7c;">
+        <div class="card-body">
+            <h5 class="card-title">Comments</h5>
+        </div>
+        
+        <!-- <div class="card m-1">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title">Usernamr</p>
+                    <p class="card-text">timestamp</p>
+                </div>
+                <p class="card-text">massage</p>
+            </div>
+        </div> -->
+        
+        {% for comment in postData.comments %}
+        <div class="card m-1">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <p class="card-title"><a class="nav-link" href="{% url 'profile' comment.username %}">{{ comment.username }}</a></p>
+                    <p class="card-text">{{ comment.timestamp | timesince }} ago</p>
+                </div>
+                <p class="card-text">{{ comment.comment }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 </div>
-<!-- <script>
-    function like_post(post_pk) {
-        let post_like = document.getElementById(`${post_pk}_post_like`);
-        let post_like_count = document.getElementById(`${post_pk}_post_like_count`);
-
-        let like = false;
-
-        if(post_like.classList.contains("bi-heart")){
-            like = true;
-        }
-
-        let data = {
-            post_pk: post_pk,
-            like: like,
-        }
-
-        let requestDataMetadata = {
-            method: "POST",
-            headers: { "content-type": "application/json", "X-CSRFToken": csrfToken },
-            body: JSON.stringify(data)
-        }
-        const url_var = document.location.origin;
-        console.log(url_var);
-        fetch(`${url_var}/post_like/`, requestDataMetadata)
-            .then(response => response.json())
-            .then(data => {
-                console.log("data.success", data.success);
-                if (data.success) {
-                    if(like){
-                        post_like.classList.remove('bi-heart');
-                        post_like.classList.add('bi-heart-fill');
-                        post_like_count.innerText = Number(post_like_count.innerText)+1;
-                    }else{
-                        post_like.classList.remove('bi-heart-fill');
-                        post_like.classList.add('bi-heart');
-                        post_like_count.innerText = Number(post_like_count.innerText)-1;
-                    }
-                } else {
-                    if(data.not_logged_in){
-                        alert("Please Login first!")
-                    }else{
-                        alert("Like action failed!");
-                    }
-                }
-            })
-            .catch(error => {
-                alert("Error!");
-                console.error('Error:', error);
-            });
-    }
-</script> -->
