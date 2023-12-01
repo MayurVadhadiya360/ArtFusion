@@ -5,6 +5,10 @@ function FollowUser(user) {
         some_user: user,
         action_decider: action_decider,
     }
+    document.getElementById(user + '_follow_btn').innerHTML = `
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>`;
 
     requestDataMetadata = {
         method: "POST",
@@ -19,7 +23,7 @@ function FollowUser(user) {
         .then(data => {
             console.log(data.success, true);
             if (data.success) {
-                document.getElementById(user + '_follow_btn').innerText = data.follow_status_text;
+                document.getElementById(user + '_follow_btn').innerHTML = data.follow_status_text;
                 document.getElementById('following_warning').innerHTML = '<i class="bi bi-exclamation-circle text-danger-emphasis "></i>'
             } else {
                 alert("Follow action failed!");

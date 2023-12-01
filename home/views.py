@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
+from django.contrib import messages
 from django.http import JsonResponse
 from .models import UserProfile, UserPost, Comments
 from django.views import View
@@ -118,9 +119,12 @@ def register(request):
                     recipient_list=[email],
                     # fail_silently=True
                 )
+                # Message For successful registration
+                messages.success(request, f"Registered Successfully with username: {username} and email: {email}!")
+                return redirect('login')  # Redirect to login page after successful registration
             except Exception as e:
                 print(e)
-            return redirect('login')  # Redirect to login page after successful registration
+                messages.error(request, f"registration Failed!\n Details: {e}")
     return render(request, 'register.html')
 
 
@@ -143,12 +147,16 @@ def user_login(request):
                 request.session["logged_in"] = True
                 request.session["UserName"] = user.username
                 # print(user_profile)
-                
+
+                messages.success(request, "Login Successfully!")
                 return redirect('home')
         except UserProfile.DoesNotExist as e:
             print("DoesNotExist", e)
+            messages.error(request, "Login failed!\nDetails: {e}")
         except Exception as e:
             print(e)
+            messages.error(request, "Login failed!\nDetails: {e}")
+
 
     return render(request, 'login.html')
 
@@ -268,19 +276,38 @@ class upload_post(View):
         user_profile = {}
         user_profile["logged_in"] = request.session["logged_in"]
         user_profile["userName"] = request.session["UserName"]
-        if user_profile["logged_in"]:
-            user = user_profile["userName"]
-            title = request.POST.get("title")
-            content = request.POST.get("desc")
-            userName = UserProfile.objects.get(username=user)
-            if request.FILES.get('image'):
-                image = request.FILES['image']
-                post_instance = UserPost(username=userName, post_title=title, post_content=content, post_image=image)
-                post_instance.save()
+        try:
+            if user_profile["logged_in"]:
+                user = user_profile["userName"]
+                title = request.POST.get("title")
+                content = request.POST.get("desc")
+                userName = UserProfile.objects.get(username=user)
+                is_img = False
+                if request.FILES.get('image'):
+                    is_img = True
+                    image = request.FILES['image']
+                    post_instance = UserPost(username=userName, post_title=title, post_content=content, post_image=image)
+                    post_instance.save()
+                else:
+                    post_instance = UserPost(username=userName, post_title=title, post_content=content)
+                    post_instance.save()
+
+                send_mail(
+                    subject="Your Post is submitted at the ArtFusion!",
+                    message=f"Congratulations for posting on ArtFusion!\n\nPost Detail:\nTitle:{title}\nContent:{content}\nContains Image:{str(is_img)}",
+                    from_email="vadhadiya.mayur@gmail.com",
+                    recipient_list=[userName.email],
+                    fail_silently=True
+                )
+                messages.success(request, "Successfully Posted a post!")
+                return redirect('home')
             else:
-                post_instance = UserPost(username=userName, post_title=title, post_content=content)
-                post_instance.save()
-            return redirect('home')
+                messages.warning(request, "Please login to send posts!")
+        except Exception as e:
+            print(e)
+            messages.error(request, "Failed posting!\nDatails: {e}")
+        return self.get(request)
+
         
     def get(self, request):
         # global user_profile

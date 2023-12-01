@@ -42,7 +42,7 @@ class UserProfileAdmin(admin.ModelAdmin):
         return actions
 
     def has_delete_permission(self, request, obj=None):
-        return False  # Enable/Disable delete permission
+        return True  # Enable/Disable delete permission
 
     def has_add_permission(self, request):
         return True  # Enable/Disable add permission
