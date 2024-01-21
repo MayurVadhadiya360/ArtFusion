@@ -297,7 +297,7 @@ class upload_post(View):
                     message=f"Congratulations for posting on ArtFusion!\n\nPost Detail:\nTitle:{title}\nContent:{content}\nContains Image:{str(is_img)}",
                     from_email="vadhadiya.mayur@gmail.com",
                     recipient_list=[userName.email],
-                    fail_silently=True
+                    # fail_silently=True
                 )
                 messages.success(request, "Successfully Posted a post!")
                 return redirect('home')
