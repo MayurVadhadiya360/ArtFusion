@@ -6,6 +6,7 @@ from .models import UserProfile, UserPost, Comments
 from django.views import View
 from datetime import datetime
 import json
+import traceback
 # from .forms import RegistrationForm, LoginForm
 
 # Create your views here.
@@ -19,18 +20,12 @@ def home(request):
         "post": "",
         "about": ""
     }
-    # del request.session["logged_in"]
-    # print(request.session["logged_in"])
-    # print(request.session["login"])
-
     temp = request.session.get('logged_in', False)
     if temp is False:
-        request.session["logged_in"] = False
+        request.session['logged_in'] = False
         request.session['UserName'] = None
-    print(temp, request.session["logged_in"])
-    if request.session["logged_in"] == True:
-        print("home", request.session['UserName'])
-        userTemp = UserProfile.objects.get(username=request.session['UserName'])
+    if request.session['logged_in'] == True:
+        userTemp = UserProfile.objects.get(username=request.session.get('UserName'))
         # user profile data to render
         user_profile['no_posts'] = len(UserPost.objects.filter(username=userTemp))
         user_profile['no_followers'] = len(userTemp.followers['followers'])
@@ -71,8 +66,8 @@ def home(request):
         user_profile['followers'] = followers_user_data
         # user_profile['following'] = following_user_data
         
-    user_profile['logged_in'] = request.session["logged_in"]
-    user_profile['userName'] = request.session["UserName"]
+    user_profile['logged_in'] = request.session.get('logged_in')
+    user_profile['userName'] = request.session.get('UserName')
 
     # All post for showing on home page
     postDatas = list(UserPost.objects.all())
@@ -81,8 +76,8 @@ def home(request):
     # Processing Posts to ckeck whether user has liked it or not
     tempUserPosts = []
     username = None
-    if request.session["logged_in"]:
-        username = request.session["UserName"]
+    if request.session.get('logged_in'):
+        username = request.session.get('UserName')
     for post in postDatas:
         temp = {
             'postData': post,
@@ -98,7 +93,6 @@ def home(request):
         "user_profile": user_profile,
         "postDatas": postDatas
     }
-    # print(user_profile)
     return render(request, 'home.html', context=context)
 
 # Gives register page and take user data to register a user
@@ -123,7 +117,7 @@ def register(request):
                 messages.success(request, f"Registered Successfully with username: {username} and email: {email}!")
                 return redirect('login')  # Redirect to login page after successful registration
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
                 messages.error(request, f"registration Failed!\n Details: {e}")
     return render(request, 'register.html')
 
@@ -133,30 +127,21 @@ def user_login(request):
     if request.method == 'POST':
         email = request.POST.get('email')
         password = request.POST.get('password')
-        print(email, password)
+        # print(email, password)
         try:
             user = UserProfile.objects.get(email=email, password=password)
             if user:
-                print(user)
-
-                # user_profile["logged_in"] = True
-                # user_profile['userName'] = user.username
-                # user_profile['no_followers'] = len(user.followers['followers'])
-                # user_profile['no_following'] = len(user.following['following'])
-
-                request.session["logged_in"] = True
-                request.session["UserName"] = user.username
-                # print(user_profile)
-
+                request.session['logged_in'] = True
+                request.session['UserName'] = user.username
                 messages.success(request, "Login Successfully!")
                 return redirect('home')
+            
         except UserProfile.DoesNotExist as e:
-            print("DoesNotExist", e)
+            print(traceback.format_exc())
             messages.error(request, "Login failed!\nDetails: {e}")
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             messages.error(request, "Login failed!\nDetails: {e}")
-
 
     return render(request, 'login.html')
 
@@ -181,8 +166,8 @@ def profile(request, user):
     # Processing Posts to ckeck whether user has liked it or not
     tempUserPosts = []
     username = None
-    if request.session["logged_in"]:
-        username = request.session["UserName"]
+    if request.session.get('logged_in'):
+        username = request.session.get('UserName')
     for post in userPosts:
         temp = {
             'postData': post,
@@ -206,7 +191,7 @@ def profile(request, user):
     profile_data['about_user'] = userData.about_user
     profile_data['profession'] = userData.profession
     profile_data['profile_photo'] = userData.profile_photo
-    print(userData.profile_photo)
+
     user_profile = {
         'logged_in': request.session.get('logged_in', False),
         'userName': userData.username
@@ -226,10 +211,10 @@ class profile_update(View):
     def get(self, request, user):
         # global user_profile
         user_profile = {}
-        user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["userName"] = request.session["UserName"]
-        if user_profile["logged_in"] and user_profile["userName"] == user:
-            userTemp = UserProfile.objects.get(username=user_profile["userName"])
+        user_profile['logged_in'] = request.session.get('logged_in')
+        user_profile['userName'] = request.session.get('UserName')
+        if user_profile['logged_in'] and user_profile['userName'] == user:
+            userTemp = UserProfile.objects.get(username=user_profile['userName'])
             userPosts = UserPost.objects.filter(username=userTemp)
             user_profile['no_post'] = len(userPosts)
             user_profile['no_followers'] = len(userTemp.followers['followers'])
@@ -249,11 +234,11 @@ class profile_update(View):
     
     def post(self, request, user):
         user_profile = {}
-        user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["userName"] = request.session["UserName"]
+        user_profile['logged_in'] = request.session.get('logged_in')
+        user_profile['userName'] = request.session.get('UserName')
 
-        if user_profile["logged_in"] and user_profile["userName"] == user:
-            user_instance = UserProfile.objects.get(username=user_profile["userName"])
+        if user_profile['logged_in'] and user_profile['userName'] == user:
+            user_instance = UserProfile.objects.get(username=user_profile['userName'])
             # if request.POST.get('edit_profession'):
             new_profession = request.POST.get('edit_profession')
             new_about = request.POST.get('edit_about')
@@ -264,6 +249,7 @@ class profile_update(View):
             user_instance.profession = new_profession
             user_instance.about_user = new_about
             user_instance.save()
+            messages.success(request, "Successfully updated profile!")
             return redirect(f'/profile/{user}/')
         else:
             return redirect('home')
@@ -274,11 +260,11 @@ class upload_post(View):
     def post(self, request):
         # global user_profile
         user_profile = {}
-        user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["userName"] = request.session["UserName"]
+        user_profile['logged_in'] = request.session.get('logged_in')
+        user_profile['userName'] = request.session.get('UserName')
         try:
-            if user_profile["logged_in"]:
-                user = user_profile["userName"]
+            if user_profile['logged_in']:
+                user = user_profile['userName']
                 title = request.POST.get("title")
                 content = request.POST.get("desc")
                 userName = UserProfile.objects.get(username=user)
@@ -304,7 +290,7 @@ class upload_post(View):
             else:
                 messages.warning(request, "Please login to send posts!")
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             messages.error(request, "Failed posting!\nDatails: {e}")
         return self.get(request)
 
@@ -312,8 +298,8 @@ class upload_post(View):
     def get(self, request):
         # global user_profile
         user_profile = {}
-        user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["userName"] = request.session["UserName"]
+        user_profile['logged_in'] = request.session.get('logged_in')
+        user_profile['userName'] = request.session.get('UserName')
         user_profile["nav_active"] = {
             "home": "",
             "profile": "",
@@ -331,15 +317,15 @@ def follow_unfollow(request):
     if request.method == 'POST':
         # global user_profile
         user_profile = {}
-        user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["userName"] = request.session["UserName"]
+        user_profile['logged_in'] = request.session.get('logged_in')
+        user_profile['userName'] = request.session.get('UserName')
         if user_profile['logged_in']:
             data = {
                 'success': False
             }
             try:
                 fData = json.loads(request.body)
-                print(fData)
+                # print(fData)
                 pri_user = user_profile['userName']
                 sec_user = fData['some_user']
                 primary_user = UserProfile.objects.get(username=pri_user)
@@ -367,7 +353,7 @@ def follow_unfollow(request):
                 data["success"] = True
 
             except Exception as e:
-                print(e)
+                print(traceback.format_exc())
                 data["success"] = False
             return JsonResponse(data)
         else:
@@ -382,15 +368,15 @@ def load_followers_following(request):
         }
         # global user_profile
         user_profile = {}
-        user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["userName"] = request.session["UserName"]
-        # if user_profile["logged_in"]:
+        user_profile['logged_in'] = request.session.get('logged_in')
+        user_profile['userName'] = request.session.get('UserName')
+        # if user_profile['logged_in']:
         try:
             load_data = json.loads(request.body)
             if load_data['user']:
                 userTemp = UserProfile.objects.get(username=load_data['user'])
-            elif user_profile["logged_in"]:
-                userTemp = UserProfile.objects.get(username=user_profile["userName"])
+            elif user_profile['logged_in']:
+                userTemp = UserProfile.objects.get(username=user_profile['userName'])
 
             users_data = []
             if load_data['what_to_load'] == 'following':
@@ -399,13 +385,13 @@ def load_followers_following(request):
                     temp = {
                         'name': user_pr.username,
                         'my_follow_status': "Following",
-                        # 'profile_photo_url': user_pr.profile_photo.url,
                     }
-                    if not user_profile["logged_in"]:
+                    if not user_profile['logged_in']:
                         temp["my_follow_status"] = "Follow"
-                    print(user_pr.pk)
+                    
                     if user_pr.profile_photo:
                         temp["profile_photo_url"] = user_pr.profile_photo.url
+
                     users_data.append(temp)
 
             elif load_data['what_to_load'] == 'followers':
@@ -413,7 +399,7 @@ def load_followers_following(request):
                     user_pr = UserProfile.objects.get(username=user)
 
                     # To define whether button shound show 'Follow' or 'Following'
-                    if user_profile["logged_in"] and  user in userTemp.following['following']:
+                    if user_profile['logged_in'] and  user in userTemp.following['following']:
                         my_follow_status = "Following"
                     else:
                         my_follow_status = "Follow"
@@ -421,20 +407,17 @@ def load_followers_following(request):
                     temp = {
                         'name': user_pr.username,
                         'my_follow_status': my_follow_status,
-                        # 'profile_photo_url': user_pr.profile_photo.url,
                     }
-                    # print(user_pr.pk)
+                    
                     if user_pr.profile_photo:
                         temp["profile_photo_url"] = user_pr.profile_photo.url
+
                     users_data.append(temp)
 
             data['users_data'] = users_data
-
-
-            print(load_data, "l_d")
             data["success"] = True
         except Exception as e:
-            print(e, "e")
+            print(traceback.format_exc())
             data["success"] = False
         
         return JsonResponse(data)
@@ -448,9 +431,8 @@ def load_posts(request):
         }
         # global user_profile
         user_profile = {}
-        user_profile["logged_in"] = request.session["logged_in"]
-        user_profile["UserName"] = request.session["UserName"]
-        # if user_profile["logged_in"]:
+        user_profile['logged_in'] = request.session.get('logged_in')
+        user_profile['userName'] = request.session.get('UserName')
         try:
             load_data = json.loads(request.body)
             user = load_data['user']
@@ -469,8 +451,9 @@ def load_posts(request):
                 }
                 if post.post_image:
                     temp['post_image'] = post.post_image.url
-                if user_profile["logged_in"]:
-                    UserTemp = UserProfile.objects.get(username=user_profile["UserName"])
+
+                if user_profile['logged_in']:
+                    UserTemp = UserProfile.objects.get(username=user_profile['userName'])
                     if UserTemp.username in post.likes['likes']:
                         temp["is_liked"] = True
 
@@ -479,7 +462,7 @@ def load_posts(request):
             data["posts"] = postDatas
             data["success"] = True
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             data["success"] = False
         return JsonResponse(data)
 
@@ -492,12 +475,12 @@ def like_post(request):
         try:
             load_data = json.loads(request.body)
             user_profile = {}
-            user_profile["logged_in"] = request.session["logged_in"]
-            user_profile["UserName"] = request.session["UserName"]
-            if user_profile["logged_in"]:
+            user_profile['logged_in'] = request.session.get('logged_in')
+            user_profile['userName'] = request.session.get('UserName')
+            if user_profile['logged_in']:
                 post_pk = load_data['post_pk']
                 like_action = load_data['like']
-                User = UserProfile.objects.get(username=user_profile["UserName"])
+                User = UserProfile.objects.get(username=user_profile['userName'])
                 Post = UserPost.objects.get(pk=post_pk)
                 like_list = set(Post.likes['likes'])
                 if like_action:
@@ -507,18 +490,17 @@ def like_post(request):
                 Post.likes['likes'] = list(like_list)
                 Post.save()
                 data["success"] = True
-                print(data["success"])
             else:
                 data['not_logged_in'] = True
-                # return redirect('home')
+                return redirect('login')
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             data["success"] = False
         return JsonResponse(data)
 
 # Load whole post with comments
 def load_whole_post(request, pk):
-    # try:
+    try:
         post = UserPost.objects.get(pk=pk)
         comments = Comments.objects.filter(post=post)
         postData = {
@@ -528,50 +510,42 @@ def load_whole_post(request, pk):
             'logged_in': False
         }
 
-        if request.session["logged_in"]:
-            username = request.session["UserName"]
+        if request.session.get('logged_in'):
+            postData['logged_in'] = True
+            username = request.session.get('UserName')
             if username in post.likes['likes']:
                 postData["is_liked"] = True
-                postData['logged_in'] = True
 
         return render(request, 'post_with_msg.html', context={"postData": postData})
-    # except Exception as e:
-    #     print(e)
-    # return redirect('home')
+    except Exception as e:
+        print(traceback.format_exc())
+    return redirect('home')
 
 # Adds a comment to particular post
 def add_comment(request):
     if request.method == "POST":
-        # try:
-            logged_in = request.session["logged_in"]
-            UserName = request.session["UserName"]
+        try:
+            logged_in = request.session.get('logged_in')
+            UserName = request.session.get('UserName')
             if logged_in:
                 comment = request.POST.get('add_comment')
                 post_pk = request.POST.get('pk')
-                print(post_pk)
+
                 post = UserPost.objects.get(pk=post_pk)
                 username = UserProfile.objects.get(username=UserName)
                 Comments.objects.create(username=username, post=post, comment=comment)
-                # tempComment = {
-                #     'username': UserName,
-                #     'comment': comment,
-                #     'timestamp': datetime.now().isoformat()
-                # }
-                # post.comments['comments'].append(tempComment)
-                # post.save()
+                
                 return redirect('load_whole_post', pk=post_pk)
-        # except Exception as e:
-        #     print(e)
-    return redirect('home')
+        except Exception as e:
+            print(traceback.format_exc())
+    return redirect('login')
 
 def user_logout(request):
-    # logout(request)
     # Redirect to a page after successful logout
-    del request.session["logged_in"]
-    del request.session["UserName"]
+    request.session.flush()
     global user_profile
     user_profile = {
-        "logged_in": False
+        'logged_in': False
     }
-    
+    messages.success(request, "Successfully logged out!")
     return redirect('home')

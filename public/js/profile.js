@@ -71,15 +71,15 @@ function load_follow_ers_ing(user, what_to_load){
                         </div>
                     </div>`
                 });
-                document.getElementById('follow_viewer').innerHTML = s;
+                document.getElementById('show_content').innerHTML = s;
             } else {
                 alert("Follow action failed!");
-                document.getElementById('follow_viewer').innerHTML = "Try Again!";
+                document.getElementById('show_content').innerHTML = "Try Again!";
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            document.getElementById('follow_viewer').innerHTML = "Error!";
+            document.getElementById('show_content').innerHTML = "Error!";
         });
 }
 
@@ -128,8 +128,7 @@ function load_post(user){
                                     <i class="bi bi-send"></i>
                                 </div>
                                 <div class="col-4 d-flex justify-content-center">
-                                    <i class="bi bi-chat"></i>
-                                    <i class="bi bi-chat fol"><a href="/post/${postData.pk}"></a></i>
+                                    <a href="/post/${postData.pk}" target="_blank"><i class="bi bi-chat fol"></i></a>
                                 </div>
                                 <div class="col-4 d-flex justify-content-center">`
                                     if(postData.is_liked){

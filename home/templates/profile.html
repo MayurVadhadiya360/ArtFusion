@@ -62,7 +62,7 @@
                             <div class="d-flex justify-content-end text-center py-1">
                                 <div>
                                     <p class="mb-1 h5">{{ profile_data.posts | length | default:0 }}</p>
-                                    <p class="small text-muted mb-0">Photos</p>
+                                    <p class="small text-muted mb-0">Posts</p>
                                 </div>
                                 <div class="px-3">
                                     <p class="mb-1 h5">{{ profile_data.followers | length | default:0 }} <span id="following_warning"></span> </p>
@@ -99,7 +99,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div id="follow_viewer" class="scrollDiv card-body" style="max-height: 625px;">
+                            <div id="show_content" class="scrollDiv card-body" style="max-height: 625px;">
                                 {% for postData in profile_data.posts %}
                                 {% include 'partials/post.html' with postData=postData from="profile" %}
                                 {% endfor %}

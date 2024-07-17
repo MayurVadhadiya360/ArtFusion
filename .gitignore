@@ -1,2 +1,7 @@
 media/
 db.sqlite3
+myenv/
+ArtFusion/.env
+ArtFusion/__pycache__/
+home/__pycache__/
+home/migrations/
