@@ -121,7 +121,7 @@
                                     <label class="input-group-text" for="edit_profile_pic">Upload Profile Pic</label>
                                   </div>
                                   <div class="d-flex justify-content-evenly">
-                                    <a class="btn btn-outline-secondary" href="/profile/{{ user_profile.userName }}">Cancel</a>
+                                    <a class="btn btn-outline-secondary" href="{% url 'profile' user_profile.userName %}">Cancel</a>
                                     <button class="btn btn-primary" type="submit">Save</button>
                                   </div>
                             </form>

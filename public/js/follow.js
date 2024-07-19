@@ -15,10 +15,8 @@ function FollowUser(user) {
         headers: { "content-type": "application/json", "X-CSRFToken": csrfToken },
         body: JSON.stringify(data)
     }
-    const url_var = document.location.origin;
-    console.log(url_var);
 
-    fetch(`${url_var}/follow_request/`, requestDataMetadata)
+    fetch(follow_unfollow_url, requestDataMetadata)
         .then(response => response.json())
         .then(data => {
             console.log(data.success, true);

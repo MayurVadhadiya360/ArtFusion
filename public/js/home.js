@@ -25,10 +25,7 @@ function load_follow_ers_ing(what_to_load) {
         body: JSON.stringify(data)
     }
 
-    const url_var = document.location.origin;
-    console.log(url_var);
-
-    fetch(`${url_var}/load_follow/`, requestDataMetadata)
+    fetch(load_followers_and_followings_url, requestDataMetadata)
         .then(response => response.json())
         .then(data => {
             console.log(data.success, true);

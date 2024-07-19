@@ -77,10 +77,10 @@
                                                 </div>
                                             </div>
                                             <div class="d-flex pt-1">
-                                                <a type="button" href="/post"
+                                                <a type="button" href="{% url 'upload_post' %}"
                                                     class="btn btn-outline-primary me-1 flex-grow-1">Post</a>
                                                 {% if user_profile.userName %}
-                                                <a type="button" href="/profile/{{ user_profile.userName }}"
+                                                <a type="button" href="{% url 'profile' user_profile.userName %}"
                                                     class="btn btn-primary flex-grow-1">View Profile</a>
                                                 {% else %}
                                                 <button type="button" class="btn btn-primary flex-grow-1" disabled>View
@@ -164,6 +164,9 @@
         crossorigin="anonymous"></script>
     <script>
         const csrfToken = "{{ csrf_token }}";
+        const follow_unfollow_url = "{% url 'follow_unfollow' %}"; // follow.js
+        const load_followers_and_followings_url = "{% url 'load_followers_following' %}"; // home.js
+        const like_post_url = "{% url 'like_post' %}"; //post.js
         
         // Close messages after 5 seconds
         setTimeout(function() {

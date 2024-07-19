@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
 from django.contrib import messages
-from django.http import JsonResponse
-from .models import UserProfile, UserPost, Comments
 from django.views import View
-from datetime import datetime
+from django.http import JsonResponse
+from django.urls import reverse
+from .models import UserProfile, UserPost, Comments
 import json
 import traceback
 # from .forms import RegistrationForm, LoginForm
@@ -250,7 +250,8 @@ class profile_update(View):
             user_instance.about_user = new_about
             user_instance.save()
             messages.success(request, "Successfully updated profile!")
-            return redirect(f'/profile/{user}/')
+            # return redirect(f'/profile/{user}/')
+            return redirect(reverse('profile', kwargs={'user': user}))
         else:
             return redirect('home')
 

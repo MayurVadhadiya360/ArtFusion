@@ -28,8 +28,9 @@
                                     style="width: 150px; z-index: 1;">
                                 {% else %}
                                 <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                                    alt="Generic placeholder image" class="rounded-circle img-fluid img-thumbnail mt-4 mb-2"
-                                    id="profile_pic" style="width: 150px; z-index: 1;">
+                                    alt="Generic placeholder image"
+                                    class="rounded-circle img-fluid img-thumbnail mt-4 mb-2" id="profile_pic"
+                                    style="width: 150px; z-index: 1;">
                                 {% endif %}
 
                                 {% if profile_data.user_s_profile %}
@@ -65,7 +66,8 @@
                                     <p class="small text-muted mb-0">Posts</p>
                                 </div>
                                 <div class="px-3">
-                                    <p class="mb-1 h5">{{ profile_data.followers | length | default:0 }} <span id="following_warning"></span> </p>
+                                    <p class="mb-1 h5">{{ profile_data.followers | length | default:0 }} <span
+                                            id="following_warning"></span> </p>
                                     <p class="small text-muted mb-0">Followers</p>
                                 </div>
                                 <div>
@@ -89,13 +91,16 @@
                                 <p class="mb-0"><a href="#!" class="text-muted">Show all</a></p> -->
                                 <ul class="nav nav-tabs card-header-tabs d-flex justify-content-evenly">
                                     <li class="nav-item text-center" style="width: 33%;">
-                                        <a class="nav-link fol active fol-fol" id="posts_btn" aria-current="true" onclick="load_post('{{profile_data.userName}}')">Posts</a>
+                                        <a class="nav-link fol active fol-fol" id="posts_btn" aria-current="true"
+                                            onclick="load_post('{{profile_data.userName}}')">Posts</a>
                                     </li>
                                     <li class="nav-item text-center" style="width: 33%;">
-                                        <a class="nav-link fol" id="followers_btn" aria-current="true" onclick="load_follow_ers_ing('{{profile_data.userName}}', 'followers')">Followers</a>
+                                        <a class="nav-link fol" id="followers_btn" aria-current="true"
+                                            onclick="load_follow_ers_ing('{{profile_data.userName}}', 'followers')">Followers</a>
                                     </li>
                                     <li class="nav-item text-center" style="width: 33%;">
-                                        <a class="nav-link fol" id="following_btn" aria-current="true" onclick="load_follow_ers_ing('{{profile_data.userName}}', 'following')">Following</a>
+                                        <a class="nav-link fol" id="following_btn" aria-current="true"
+                                            onclick="load_follow_ers_ing('{{profile_data.userName}}', 'following')">Following</a>
                                     </li>
                                 </ul>
                             </div>
@@ -127,27 +132,32 @@
         crossorigin="anonymous"></script>
     <script>
         const csrfToken = "{{ csrf_token }}";
-        function update_post_follower_following_navbar(what_to_load){
-    var followers_btn = document.getElementById('followers_btn');
-    var following_btn = document.getElementById('following_btn');
-    var posts_btn = document.getElementById('posts_btn');
-    if(what_to_load == "followers"){
-        followers_btn.classList.add("active", "fol-fol");
-        following_btn.classList.remove("active", "fol-fol");
-        posts_btn.classList.remove("active", "fol-fol");
-    }else if(what_to_load == "following"){
-        followers_btn.classList.remove("active", "fol-fol");
-        following_btn.classList.add("active", "fol-fol");
-        posts_btn.classList.remove("active", "fol-fol");
-    }else if(what_to_load == "posts"){
-        followers_btn.classList.remove("active", "fol-fol");
-        following_btn.classList.remove("active", "fol-fol");
-        posts_btn.classList.add("active", "fol-fol");
-    }
-}
+        // function update_post_follower_following_navbar(what_to_load) {
+        //     var followers_btn = document.getElementById('followers_btn');
+        //     var following_btn = document.getElementById('following_btn');
+        //     var posts_btn = document.getElementById('posts_btn');
+        //     if (what_to_load == "followers") {
+        //         followers_btn.classList.add("active", "fol-fol");
+        //         following_btn.classList.remove("active", "fol-fol");
+        //         posts_btn.classList.remove("active", "fol-fol");
+        //     } else if (what_to_load == "following") {
+        //         followers_btn.classList.remove("active", "fol-fol");
+        //         following_btn.classList.add("active", "fol-fol");
+        //         posts_btn.classList.remove("active", "fol-fol");
+        //     } else if (what_to_load == "posts") {
+        //         followers_btn.classList.remove("active", "fol-fol");
+        //         following_btn.classList.remove("active", "fol-fol");
+        //         posts_btn.classList.add("active", "fol-fol");
+        //     }
+        // }
+        const like_post_url = "{% url 'like_post' %}"; //post.js
+        const follow_unfollow_url = "{% url 'follow_unfollow' %}"; // follow.js
+        const load_followers_and_followings_url = "{% url 'load_followers_following' %}"; // profile.js
+        const load_posts_url = "{% url 'load_posts' %}"; // profile.js
     </script>
     <script src="/static/js/post.js"></script>
     <script src="/static/js/profile.js"></script>
     <script src="/static/js/follow.js"></script>
 </body>
+
 </html>

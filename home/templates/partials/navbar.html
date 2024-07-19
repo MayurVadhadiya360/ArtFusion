@@ -10,26 +10,26 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 {% if not logged_in %}
                 <li class="nav-item">
-                    <a class="nav-link active disabled" aria-current="page" href="" aria-disabled="true">Home</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}" aria-disabled="true">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="/profile/{{ user_profile.userName }}" aria-disabled="true">Profile</a>
+                    <a class="nav-link disabled" href="" aria-disabled="true">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="/post" aria-disabled="true">Post</a>
+                    <a class="nav-link disabled" href="" aria-disabled="true">Post</a>
                 </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link disabled" href="/about" aria-disabled="true">About</a>
                 </li> -->
                 {% else %}
                 <li class="nav-item">
-                    <a class="nav-link {{ nav_active.home }}" aria-current="page" href="/">Home</a>
+                    <a class="nav-link {{ nav_active.home }}" aria-current="page" href="{% url 'home' %}">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ nav_active.profile }}" href="/profile/{{ user_profile.userName }}">Profile</a>
+                    <a class="nav-link {{ nav_active.profile }}" href="{% url 'profile' user_profile.userName %}">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ nav_active.post }}" href="/post">Post</a>
+                    <a class="nav-link {{ nav_active.post }}" href="{% url 'upload_post' %}">Post</a>
                 </li>
                 <!-- <li class="nav-item">
                     <a class="nav-link {{ nav_active.about }}" href="/about">About</a>
@@ -40,10 +40,10 @@
                 <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-light me-2" >Search</button>
                 {% if not logged_in %}
-                <a class="btn btn-info me-1" href="/login">Login</a>
-                <a class="btn btn-info" href="/register">Register</a>
+                <a class="btn btn-info me-1" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-info" href="{% url 'register' %}">Register</a>
                 {% else %}
-                <a class="btn btn-info" href="/logout">Logout</a>
+                <a class="btn btn-info" href="{% url 'logout' %}">Logout</a>
                 {% endif %}
             </div>
         </div>
