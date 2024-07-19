@@ -1,6 +1,7 @@
 media/
 db.sqlite3
 myenv/
+afenv/
 ArtFusion/.env
 ArtFusion/__pycache__/
 home/__pycache__/
