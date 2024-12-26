@@ -1,7 +1,6 @@
-media/
 db.sqlite3
 __pycache__
 .venv/
 ArtFusion/.env
-home/migrations/
 socialmedia/migrations/
+staticfiles/
