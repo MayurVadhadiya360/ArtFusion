@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArtFusion | Edit Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/static/css/index.css">
+</head>
+
+<body>
+    {% include 'partials/navbar.html' with is_loggedin=user_data.is_loggedin username=user_data.username nav_active="profile" %}
+    {% include 'partials/messages.html' with messages=messages %}
+    <section>
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col col-lg-9 col-xl-7">
+                    <div class="card">
+                        <div class="rounded-top text-white d-flex flex-row"
+                            style="background-color: #000; height:200px;">
+                            <div class="ms-4 mt-5 d-flex flex-column" style="width: 150px;">
+                                <div style="z-index: 1; margin-top: 20px">
+                                    <img src="{% if user_data.profile_photo %} {{ user_data.profile_photo.url }} {% else %} /static/img/placeholder-profile-picture.png {% endif %}"
+                                        alt="Generic placeholder image" class="profile-img" id="profile_pic"
+                                        style="border: 5px solid white;">
+                                </div>
+                                <button type="button" class="btn btn-info" data-mdb-ripple-color="dark"
+                                    style="z-index: 1;" disabled>
+                                    Follow
+                                </button>
+
+                            </div>
+                            <div class="ms-3" style="margin-top: 130px;">
+                                <h5 id="username">{{ user_data.username | default:"Your Username" }}</h5>
+                                <p id="user_profession">{{ user_data.profession | default:"Your Profession"}}</p>
+                            </div>
+                        </div>
+                        <div class="p-4 text-black" style="background-color: #f8f9fa;">
+                            <div class="d-flex justify-content-end text-center py-1">
+                                <div>
+                                    <p class="mb-1 h5">{{ user_data.post_count | default:0 }}</p>
+                                    <p class="small text-muted mb-0">Posts</p>
+                                </div>
+                                <div class="px-3">
+                                    <p class="mb-1 h5">{{ user_data.followers_count | default:0 }}</p>
+                                    <p class="small text-muted mb-0">Followers</p>
+                                </div>
+                                <div>
+                                    <p class="mb-1 h5">{{ user_data.following_count | default:0 }}</p>
+                                    <p class="small text-muted mb-0">Following</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body p-4 text-black">
+                            <div class="mb-3">
+                                <p class="lead fw-normal mb-1">About</p>
+                                <div class="p-4" style="background-color: #f8f9fa;">
+                                    <p class="font-italic mb-0" id="about_user">
+                                        {{ user_data.about_user | default:"Mention about youself" }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="card-body p-4 text-black">
+                            <form action="{% url 'update_profile' user=user_data.username %}"
+                                enctype="multipart/form-data" method="post">
+                                {% csrf_token %}
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">Profession</span>
+                                    <input type="text" class="form-control" id="edit_profession" name="profession"
+                                        value="{{ user_data.profession }}" placeholder="Profession"
+                                        oninput="updateProfession()">
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <textarea class="form-control" placeholder="Leave a comment here" id="edit_about"
+                                        name="about_user" val style="height: 100px"
+                                        oninput="updateAbout()">{{ user_data.about_user }}</textarea>
+                                    <label for="edit_about">About</label>
+                                </div>
+                                <div class="input-group mb-3">
+                                    <input type="file" class="form-control" id="edit_profile_pic" name="profile_pic"
+                                        accept="image/*" oninput="updateProfilePic(event)">
+                                    <label class="input-group-text" for="edit_profile_pic">Upload Profile Pic</label>
+                                </div>
+                                <div class="d-flex justify-content-evenly">
+                                    <a class="btn btn-outline-secondary"
+                                        href="{% url 'profile' user_data.username %}">Cancel</a>
+                                    <button class="btn btn-primary" type="submit">Save</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        function updateProfession() {
+            document.getElementById("user_profession").innerHTML = document.getElementById("edit_profession").value;
+        }
+        function updateAbout() {
+            document.getElementById("about_user").innerHTML = document.getElementById("edit_about").value;
+        }
+        function updateProfilePic(event) {
+            if(event.target.files[0]){
+                document.getElementById("profile_pic").src = URL.createObjectURL(event.target.files[0]);
+            }
+            else{
+                document.getElementById("profile_pic").src = "{% if user_data.profile_photo %} {{ user_data.profile_photo.url }} {% else %} /static/img/placeholder-profile-picture.png {% endif %}";
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

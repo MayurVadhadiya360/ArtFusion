@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'home',
+    'socialmedia',
 ]
 
 MIDDLEWARE = [
@@ -139,9 +139,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "public"),
-]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # AWS S3 settings
@@ -162,7 +159,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_AGE = 900 # Set session timeout to 15 minutes (900 seconds)
+SESSION_COOKIE_AGE = 60*60 # Set session timeout to 60 minutes (3600 seconds)
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 

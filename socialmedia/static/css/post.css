@@ -1,0 +1,174 @@
+/* post */
+.post-shadow:hover {
+  box-shadow: 5px 5px 10px rgba(124, 124, 124, 0.5);
+}
+
+.post-div {
+  width: 30rem;
+}
+
+.post-header {
+  padding: 0.5rem 1rem;
+}
+
+.post-image {
+  max-height: 25rem;
+  max-width: 28rem;
+  height: auto;
+  width: auto;
+}
+
+.post-image-div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.delete-post {
+  z-index: 999;
+  width: fit-content;
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.delete-icon-anchor {
+  text-decoration: none;
+}
+
+.delete-icon-submit {
+  background-color: transparent;
+  border: none;
+  color: red;
+}
+
+/* comment */
+.post-comment-constainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100%;
+  width: 100%;
+  padding-top: 1rem;
+}
+
+.comment-section {
+  display: grid;
+  grid-template-rows: 50px 1fr 3rem;
+  margin-left: 1rem;
+  width: 25rem;
+}
+
+.post-owner-section {
+  display: flex;
+  align-items: center;
+  border-bottom: 0.8px solid rgb(38, 38, 38);
+  border-left: 0.8px solid rgb(38, 38, 38);
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+
+.post-owner-username {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  display: inline-block;
+  vertical-align: bottom;
+  max-width: 15rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 1;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.post-owner-username:hover {
+  opacity: 0.5;
+}
+
+.post-comments {
+  padding: 10px;
+  border-bottom: 0.8px solid rgb(38, 38, 38);
+  border-left: 0.8px solid rgb(38, 38, 38);
+  overflow-y: scroll;
+}
+
+.post-comments::-webkit-scrollbar {
+  display: none;
+}
+
+.post-comment-profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 16px;
+  border: none;
+  object-fit: cover;
+  object-position: center;
+}
+
+.comment {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  margin-bottom: 5px;
+}
+
+.comment-info {
+  margin-left: 15px;
+}
+
+.username-and-comment {
+  display: inline;
+}
+
+.commenter-username {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  opacity: 1;
+  transition: opacity 0.15s ease-in-out;
+}
+
+.commenter-username:hover {
+  opacity: 0.5;
+}
+
+.comment-time {
+  color: rgb(168, 168, 168);
+  font-size: 12px;
+}
+
+.add-comment-section {
+  display: flex;
+  flex-direction: row;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-left: 0.8px solid rgb(38, 38, 38);
+  align-items: center;
+}
+
+.add-comment-input {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  color: white;
+  width: 100%;
+}
+
+.add-comment-submit {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  color: rgb(0, 149, 246);
+  font-weight: 600;
+}
+
+.add-comment-submit:hover {
+  color: rgb(224, 241, 255);
+}
+
+.add-comment-submit:disabled {
+  color: rgba(179, 219, 255, 0.5);
+}

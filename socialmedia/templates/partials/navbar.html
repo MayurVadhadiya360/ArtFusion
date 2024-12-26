@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary navbar-fixed" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">ArtFusion</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if not is_loggedin %}
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'home' %}" aria-disabled="true">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="" aria-disabled="true">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="" aria-disabled="true">Post</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link disabled" href="/about" aria-disabled="true">About</a>
+                </li> -->
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link {% if nav_active == 'home' %} active {% endif %}" aria-current="page" href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if nav_active == 'profile' %} active {% endif %}" href="{% url 'profile' username %}">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {% if nav_active == 'post' %} active {% endif %}" href="{% url 'upload_post' %}">Post</a>
+                </li>
+                <!-- <li class="nav-item">
+                    <a class="nav-link {{ nav_active.about }}" href="/about">{{nav_active}}</a>
+                </li> -->
+                {% endif %}
+            </ul>
+            <div class="d-flex" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-light me-2" >Search</button>
+                {% if not is_loggedin %}
+                <a class="btn btn-info me-1" href="{% url 'login' %}">Login</a>
+                <a class="btn btn-info" href="{% url 'register' %}">Register</a>
+                {% else %}
+                <a class="btn btn-danger" href="{% url 'logout' %}">Logout</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,31 @@
+<div class="card follower-card mb-2">
+    <div style="width: 80px;">
+        <img src="{% if user.profile_photo %} {{ user.profile_photo.url }} {% else %} /static/img/placeholder-profile-picture.png {% endif %}" alt="Generic placeholder image" id="profile_pic"
+            style="width: 70px; height: 70px; border-radius: 35px; border: none; margin: 5px; object-fit: cover; object-position: center;">
+    </div>
+    <div class="d-flex align-items-center" style="flex: 1;">
+        <div style="display: flex; flex-direction: column; justify-content: start; margin-left: 5px;">
+            <p class="d-inline-block m-0 text-truncate" data-bs-toggle="tooltip" data-bs-title="{{ user.username }}"
+                style="max-width: 200px; width: fit-content; font-size: 20px; text-align: left; font-weight: 500;">
+                {{ user.username }}
+            </p>
+            <p class="d-inline-block m-0 text-truncate" data-bs-toggle="tooltip" data-bs-title="{{ user.profession }}"
+                style="max-width: 200px; width: fit-content; font-size: 14px; text-align: left; font-style: italic;">
+                {{ user.profession }}
+            </p>
+        </div>
+    </div>
+    <div class=" card-body  d-flex justify-content-end">
+        {% if is_loggedin and user.is_following %}
+        <button class="btn btn-outline-dark btn-sm" data-action="unfollow" style="width: 5rem;"
+            onclick="followUser(this, '{{user.username}}')">
+            Following
+        </button>
+        {% else %}
+        <button class="btn btn-outline-dark btn-sm" data-action="follow" style="width: 5rem;"
+            onclick="followUser(this, '{{user.username}}')">
+            Follow
+        </button>
+        {% endif %}
+    </div>
+</div>

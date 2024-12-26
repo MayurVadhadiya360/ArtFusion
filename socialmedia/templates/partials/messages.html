@@ -1,0 +1,93 @@
+<style>
+  .lower-right-message-box {
+    z-index: 999;
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+  }
+</style>
+<div class="lower-right-message-box">
+  <!-- <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div> -->
+
+  {% if messages %}
+  {% for message in messages %}
+  <div class="auto-close-message">
+    {% if message.tags == 'success' %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif message.tags == 'error' %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif message.tags == 'warning' %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% else %}
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% endif %}
+  <script>
+    function removeMessages(messageClass, removalTime) {
+      let messages = document.getElementsByClassName(messageClass);
+      for (let i = 0; i < messages.length; i++) {
+        let element = messages[i];
+        setTimeout(() => {
+          element.remove();
+          console.log(messages.length);
+        }, removalTime | 5000);
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      removeMessages('auto-close-message', 5000);
+    });
+
+    function showMessage(message) {
+      // <div class="alert alert-success alert-dismissible fade show" role="alert">
+      //   message
+      //   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      // </div>
+      const msgDiv = document.createElement('div');
+      msgDiv.className = "alert alert-success alert-dismissible fade show";
+      msgDiv.setAttribute('role', 'alert');
+
+      const msgTextNode = document.createTextNode(message);
+
+      const msgCloseButton = document.createElement('button');
+      msgCloseButton.className = 'btn-close';
+      msgCloseButton.setAttribute('type', 'button');
+      msgCloseButton.setAttribute('data-bs-dismiss', 'alert');
+      msgCloseButton.setAttribute('aria-label', 'Close');
+
+      msgDiv.appendChild(msgTextNode);
+      msgDiv.appendChild(msgCloseButton);
+
+      const msgContainer = document.querySelector('.lower-right-message-box');
+      if (msgContainer) {
+        msgContainer.appendChild(msgDiv);
+      }
+      else {
+        console.error("Message container element not found!");
+      }
+
+      setTimeout(() => {
+        msgDiv.remove();
+      }, 3000);
+
+    }
+  </script>
+
+</div>

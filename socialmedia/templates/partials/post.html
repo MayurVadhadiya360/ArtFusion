@@ -1,0 +1,84 @@
+{% load custom_filters %}
+<div class="container post-div p-0" data-bs-theme="dark">
+    <div class="card post-shadow">
+        {% if show_delete_button %}
+        <form action="{% url 'delete_post' postData.postData.pk %}" method="post" class="delete-post">
+            {% csrf_token %}
+            <a href="javascript:void(0)" class="delete-icon-anchor">
+                <button type="submit" class="delete-icon-submit">
+                    <i class="bi bi-trash-fill"></i>
+                </button>
+            </a>
+        </form>
+        {% endif %}
+
+        {% if show_username_datetime_header %}
+        <div class="post-owner-section post-header">
+            <div>
+                <img src="{% if postData.postData.username.profile_photo.name %} {{ postData.postData.username.profile_photo.url }} {% else %} /static/img/placeholder-profile-picture.png {% endif %}"
+                    class="post-comment-profile-pic" alt="{{ postdata.postData.username.username }} profile" />
+            </div>
+            <div style="margin-left: 15px; display: inline;">
+                <a class="post-owner-username" href="{% url 'profile' postData.postData.username.username %}"
+                    target="_blank" data-bs-toggle="tooltip" data-bs-title="{{ postData.postData.username.username }}">
+                    {{ postData.postData.username.username }}
+                </a>
+                <span style="font-weight: 800; margin-left: 2px; margin-right: 2px;">
+                    &middot;
+                </span>
+                <span style="color: rgb(168, 168, 168);">
+                    <time datetime="{{ postData.postData.created_at }}">
+                        {{ postData.postData.created_at | custom_timesince }}
+                    </time>
+                </span>
+            </div>
+        </div>
+        <hr class="m-0">
+        {% else %}
+        <div style="height: 10px;"></div>
+        {% endif %}
+
+        <div class="card-body post-header">
+            <h4 class="card-title">{{ postData.postData.post_title | default:""}}</h4>
+            <p class="card-text">{{ postData.postData.post_content | default:""}}</p>
+        </div>
+
+        {% if postData.postData.post_image.name %}
+        <div class="post-image-div">
+            <img src="{{ postData.postData.post_image.url }}" class="card-img p-1 post-image" alt="image">
+        </div>
+        {% endif %}
+
+        <hr class="m-0">
+        <div class="card-body row">
+            <div class="col-4 d-flex justify-content-center">
+                <i class="bi bi-send"></i>
+            </div>
+            <div class="col-4 d-flex justify-content-center">
+                {% if show_link_in_comment_icon %}
+                <a href="{% url 'view_post' postData.postData.pk %}" target="_blank">
+                    <i class="bi bi-chat fol" style="cursor: pointer; margin-right: 5px;"></i>
+                </a>
+                {% else %}
+                <i class="bi bi-chat fol" style="margin-right: 5px;"></i>
+                {% endif %}
+                <span id="{{ postData.postData.pk }}_post_comment_count"
+                    data-commentcount="{{ postData.postData.comment_count | default:'0' }}">
+                    {{ postData.postData.comment_count | default:"" }}
+                </span>
+            </div>
+            <div class="col-4 d-flex justify-content-center align-items-center">
+                <a href="jjavascript:void(0)">
+                    <i class="bi {% if postData.is_liked %} bi-heart-fill {% else %} bi-heart {% endif %}"
+                        style="color: red; cursor: pointer; margin-right: 5px;"
+                        onclick="like_post('{{ postData.postData.pk }}')" id="{{ postData.postData.pk }}_post_like"></i>
+                </a>
+
+                <span id="{{ postData.postData.pk }}_post_like_count"
+                    data-likecount="{{ postData.postData.like_count | default:'0' }}">
+                    {{ postData.postData.like_count | default:"" }}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

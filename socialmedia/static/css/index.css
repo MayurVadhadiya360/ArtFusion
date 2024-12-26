@@ -1,0 +1,106 @@
+body{
+  margin: 0;
+  padding-top: 56px;
+  background-color: black;
+  color: white;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  /* border-radius: 3px; */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.profile-img{
+  width: 140px; 
+  height: 140px; 
+  border-radius: 70px; 
+  border: none; 
+  margin: 5px; 
+  object-fit: cover; 
+  object-position: center;
+}
+
+.post-container {
+  border: none;
+  padding: 10px;
+  align-items: center;
+}
+
+.scroll-y {
+  overflow-y: scroll;
+}
+
+.follower-card{
+  display: flex;
+  flex-direction: row;
+  transition: box-shadow 0.25s;
+}
+
+.follower-card:hover{
+  box-shadow: 3px 3px 6px rgba(124, 124, 124, 0.5);
+}
+
+.profile-nav{
+  transition: box-shadow 0.25s;
+}
+
+.profile-nav:hover {
+  cursor: pointer;
+  box-shadow: 0px 7px 7px 0px rgba(124, 124, 124, 0.15) inset;
+}
+
+.profile-nav-active {
+  box-shadow: 0px 7px 7px 0px rgba(124, 124, 124, 0.15) inset;
+}
+
+.profile-content{
+  max-height: 625px;
+  min-height: 200px;
+  border: 1px solid #ccc;
+  transition: display 1s;
+}
+
+.follow-view{
+  height: 400px;
+}
+
+/* Navbar styles */
+.navbar-fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+
+/* home.html */
+.user-profile-section{
+  position: fixed;
+  left: 10px;
+  top: 70px;
+  bottom: 15px;
+
+  width: 440px;
+  padding: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  z-index: 200;
+}

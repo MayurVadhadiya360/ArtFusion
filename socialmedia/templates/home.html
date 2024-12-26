@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ArtFusion | home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/post.css">
+</head>
+
+<body {% if user_data.is_loggedin %} style="padding-left: 500px;" {% endif %}>
+
+    {% include 'partials/navbar.html' with is_loggedin=user_data.is_loggedin username=user_data.username nav_active="home" %}
+    {% include 'partials/messages.html' with messages=messages %}
+
+    {% if user_data.is_loggedin %}
+    <div class="user-profile-section">
+        <section class="vh-3">
+            <div class="container">
+                <div class="row d-flex justify-content-center align-items-center ">
+                    <div class="col col-md-12" style="padding: 0;">
+                        <div class="card" style="border-radius: 15px;">
+                            <div class="card-body p-2">
+                                <div class="d-flex text-black">
+                                    <div class="flex-shrink-0">
+                                        <img src="{% if user_data.user_profile_pic.name %} {{ user_data.user_profile_pic.url }} {% else %} /static/img/placeholder-profile-picture.png {% endif %}" 
+                                            class="profile-img" alt="{{ user_data.username }}">
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h5 class="mb-1">{{ user_data.username }}</h5>
+                                        <p class="mb-2 pb-1" style="color: #2b2a2a;">{{ user_data.user_profession | default:"Your Profession" }}</p>
+                                        <div class="d-flex justify-content-evenly rounded-3 p-2 mb-2"
+                                            style="background-color: #efefef;">
+                                            <div>
+                                                <p class="small text-muted mb-1">Posts</p>
+                                                <p class="mb-0">{{ user_data.post_count }}</p>
+                                            </div>
+                                            <div class="px-3">
+                                                <p class="small text-muted mb-1">Followers</p>
+                                                <p class="mb-0">{{ user_data.followers_count }}</p>
+                                            </div>
+                                            <div>
+                                                <p class="small text-muted mb-1">following</p>
+                                                <p class="mb-0">{{ user_data.following_count }} <span
+                                                        id="following_warning"></span> </p>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex pt-1">
+                                            <a type="button" href="{% url 'upload_post' %}"
+                                                class="btn btn-outline-primary me-1 flex-grow-1">Post</a>
+
+                                            <a type="button" href="{% url 'profile' user_data.username %}"
+                                                class="btn btn-primary flex-grow-1">View Profile</a>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="container mt-3" style="padding:0; width: 440px;">
+            <div class="card text-center">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs d-flex justify-content-evenly">
+                        <li class="nav-item" style="width: 50%;">
+                            <a class="nav-link profile-nav profile-nav-active active" 
+                                onclick="showXHideY('show_followers', 'show_following');changeClass(this);">Followers</a>
+                        </li>
+                        <li class="nav-item" style="width: 50%;">
+                            <a class="nav-link profile-nav" 
+                                onclick="showXHideY('show_following', 'show_followers');changeClass(this);">Following</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body scroll-y follow-view" id="show_followers">
+
+                    {% for userdata in user_data.followers %}
+                    {% include 'partials/follower_card.html' with user=userdata is_loggedin=user_data.is_loggedin %}
+                    {% endfor %}
+
+                </div>
+
+                <div class="card-body scroll-y follow-view" id="show_following" style="display: none;">
+
+                    {% for userdata in user_data.following %}
+                    {% include 'partials/follower_card.html' with user=userdata is_loggedin=user_data.is_loggedin %}
+                    {% endfor %}
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="container card post-container" style="background-color: transparent;">
+        {% for postData in postsData %}
+        <div style="margin-bottom: 1rem;">
+            {% include 'partials/post.html' with postData=postData show_username_datetime_header=True show_link_in_comment_icon=True %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script>
+        const csrfToken = "{{ csrf_token }}";
+        const follow_user_url = "{% url 'follow_user' %}"; // index.js
+
+        const like_post_url = "{% url 'like_post' %}"; //post.js
+
+        // Enable tooltip
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+
+        function showXHideY(x1ElementID, y1ElementID){
+            let x = document.getElementById(x1ElementID);
+            let y = document.getElementById(y1ElementID);
+
+            x.style.display = "block";
+            y.style.display = "none";
+        }
+
+
+        function changeClass(thisElement){
+            let elements = document.getElementsByClassName("profile-nav");
+            for (let i = 0; i < elements.length; i++) {
+                elements[i].classList.remove('profile-nav-active','active');
+            }
+            thisElement.classList.add('profile-nav-active','active');
+        }
+    </script>
+    <script src="/static/js/index.js"></script>
+</body>
+
+</html>
