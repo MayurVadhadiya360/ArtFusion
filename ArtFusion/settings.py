@@ -11,24 +11,23 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import environ
-
-# Initialise environment variables
-env = environ.Env()
-environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Initialise environment variables
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG')
+DEBUG = True if os.environ.get('DEBUG') == 'True' else False
 
 ALLOWED_HOSTS = ['*']
 
@@ -140,10 +139,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # AWS S3 settings
-AWS_ACCESS_KEY_ID = env('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = env('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = env('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_REGION_NAME = env('AWS_S3_REGION_NAME')  # e.g., 'us-west-2'
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get('AWS_S3_REGION_NAME')  # e.g., 'us-west-2'
 AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
@@ -165,5 +164,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com' # SMTP server for your email provider
 EMAIL_PORT = 587 # Port for the SMTP server
 EMAIL_USE_TLS = True # Use TLS encryption
-EMAIL_HOST_USER = env('EMAIL_HOST_USER') # Your email address
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD') # Your email password
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') # Your email address
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') # Your email password
