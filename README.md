@@ -3,18 +3,18 @@ ArtFusion is a social media website created with Django, where users can create 
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Configuration](#configuration)
+- [Usage](#usage)
 
 
 ## Features
-- User authentication and registration
+- User registration and authentication
 - Profile creation and management
-- Post creation with media file upload
+- Post creation with media file upload (on AWS S3)
+- Like&Comment on posts
 - Follow/unfollow other users
-- View latest posts by all users
 - Integration with AWS S3 for media file storage
-- Email notifications for various events
+- Email notifications for various events (Post creation)
 
 ## Installation
 ### Prerequisites
@@ -30,15 +30,21 @@ cd ArtFusion
 ```
 ### Create and Activate Virtual Environment (Optional But Recommended)
 ```
+# create your python virtual environment
 python -m venv yourenv
-source yourenv/bin/activate  # On Windows use `yourenv\Scripts\activate`
+
+# activate virtual environment
+# windows:
+yourenv\Scripts\activate
+# other(linux):
+source yourenv/bin/activate  
 ```
 ### Install Dependencies
 ```
 pip install -r requirements.txt
 ```
 ### Setup Environment Variables
-Create a `.env` file in the project directory (same directory as `settings.py`) and add your AWS credentials and other necessary environment variables:
+Create a `.env` file in the root project directory and add your credentials and other necessary environment variables:
 ```
 DEBUG=True
 SECRET_KEY=your-secret-key
@@ -48,16 +54,19 @@ AWS_STORAGE_BUCKET_NAME=your-s3-bucket-name
 AWS_S3_REGION_NAME=your-aws-region-name
 EMAIL_HOST_USER=your-email@example.com
 EMAIL_HOST_PASSWORD=your-email-password
+SQL_DB_URL=postgresql-or-any-other-sql-db-connection-url
 ```
+see [configuration](#configuration).
 ### Apply Migrations
 ```
+python manage.py makemigrations
 python manage.py migrate
 ```
-### Create a Superuser
+### Create a Superuser (Optional: For admin panel access)
 ```
 python manage.py createsuperuser
 ```
-### Collect Static Files For Production (Optional)
+### Collect Static Files (Optional: For running server in production)
 ```
 python manage.py collectstatic
 ```
@@ -66,19 +75,6 @@ python manage.py collectstatic
 python manage.py runserver
 ```
 Visit `http://127.0.0.1:8000` in your web browser to see the application running.
-
-## Usage
-### User Registration and Login
-- Users can register by providing a username, email, and password.
-- After registration, users can log in using their credentials.
-### Profile Management
-- Users can create and update their profile, including uploading a profile picture.
-### Post Creation
-- Users can create posts with text and media (images) that are stored in AWS S3.
-### Following Users
-- Users can follow and unfollow other users
-### Viewing Posts
-- Users can view the latest posts by all users on the homepage.
 
 ## Configuration
 ### AWS S3 Configuration
@@ -104,6 +100,25 @@ You can use following `bucket policy` for enabling public read access:
     ]
 }
 ```
+### Database Configuration
+I have used render's PostgreSQL DB instance as hobby project for this project. And I have used Database's URL for direct configuration in database in `settings.py` with dj-database-url.
+```
+DATABASES = {
+    'default': dj_database_url.parse(os.environ.get("SQL_DB_URL"))
+}
+```
+You can search for detailed steps in google/youtube. Search: `render postgres database django`
 
-### Email Configuration
-Set up your email settings in the `.env` file to enable email notifications.
+## Usage
+### User Registration and Login
+- Users can register by providing a username, email, and password.
+- After registration, users can log in using their credentials.
+### Profile Management
+- User can create and update their profile, including uploading a profile picture.
+### Post
+- User can create posts with media (images) that are stored in AWS S3.
+- User can delete their posts.
+- User can like or comment on other user's posts.
+### Follow Users
+- Users can follow and unfollow other users.
+
