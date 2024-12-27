@@ -1,5 +1,9 @@
 # ArtFusion
 ArtFusion is a social media website created with Django, where users can create posts, follow their favorite content creators, and see the latest posts by different users. The project utilizes SQL database(PostgreSQL) and AWS S3 for media file storage. It also makes use of Django's built-in services such as send_mail, messages, and models.
+## Try out website
+website: https://artfusion-qu4u.onrender.com/
+
+username:Tester, email: tester@example.com, password: Tester@123
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
