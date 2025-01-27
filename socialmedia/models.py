@@ -1,6 +1,4 @@
 from django.db import models
-# from django.db.models.fields import ArrayField
-# from django.contrib.postgres.fields import ArrayField
 
 # Create your models here.
 class UserProfile(models.Model):
